@@ -7,8 +7,21 @@ from datetime import date
 from typing import List
 
 
-# MySQL connection string
-SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:Cooperation322060#@localhost:3306/pet_tracker"
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # if using an environment file
+
+# Remote database connection URL
+# SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")  # if using environment variable
+
+# For direct use, use this string:
+
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
+
+# Create engine and session
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
@@ -36,8 +49,7 @@ class CatHealthLog(Base):
     insights = Column(Text, default="")
     recommendation = Column(Text, default="")
 
-# Create the table
-Base.metadata.create_all(bind=engine)
+
 
 # Pydantic schemas
 class CatHealthLogCreate(BaseModel):
@@ -77,3 +89,6 @@ class AnalysisResponse(BaseModel):
     alert_level: str
     insights: List[str]
     recommendation: str
+
+# Create the table
+Base.metadata.create_all(bind=engine)

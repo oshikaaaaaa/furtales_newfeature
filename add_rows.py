@@ -1,14 +1,14 @@
 import csv
 from datetime import datetime
-
 from tracker import Base, CatHealthLog, SessionLocal  # assuming tracker.py has your models
 
 # Path to your CSV
-CSV_FILE = "cat_logs.csv"
+CSV_FILE = "cat_logs.csv"  # Path to the CSV file
 
 # Create DB session
 db = SessionLocal()
 
+# Open the CSV file
 with open(CSV_FILE, newline='', encoding='utf-8') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
@@ -16,7 +16,7 @@ with open(CSV_FILE, newline='', encoding='utf-8') as csvfile:
         date_value = datetime.strptime(row['date'], "%Y-%m-%d").date()
         visible_issues = row['visible_issues'].strip()
         
-        # Remove brackets from visible_issues string
+        # Remove brackets from visible_issues string if needed
         if visible_issues.startswith("[") and visible_issues.endswith("]"):
             visible_issues = visible_issues[1:-1].strip()
         

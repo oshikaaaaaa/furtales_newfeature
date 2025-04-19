@@ -424,7 +424,7 @@ def get_weekly_insights(date_str: str, db: Session = Depends(get_db)):
 # Serve the main HTML page
 @app.get("/")
 def read_root():
-    return FileResponse("static/calendar.html")
+    return FileResponse("static/index.html")
 
 @app.get("/heatmap.html")
 def get_heatmap():
@@ -434,5 +434,13 @@ def get_heatmap():
 @app.get("/stepgraph.png")
 def get_step():
     return FileResponse("static/stepgraph.png")
+
+
+if __name__ != "__main__":
+    import sys
+    from fastapi import FastAPI
+    from mangum import Mangum
+
+    handler = Mangum(app)
 
 

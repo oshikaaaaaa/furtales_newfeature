@@ -443,8 +443,8 @@
     <div class="form">
 
       <div class="insights-buttons">
-        <button id="daily-insights-btn" class="insights-btn" onclick="showDailyInsights()">View Daily Insights</button>
-        <button id="weekly-insights-btn" class="insights-btn" onclick="showWeeklyInsights()">View Weekly Insights</button>
+        <button id="modal-daily-insights-btn" class="insights-btn" onclick="showDailyInsights()">View Daily Insights</button>
+        <button id="modal-weekly-insights-btn" class="insights-btn" onclick="showWeeklyInsights()">View Weekly Insights</button>
       </div>
 
       <h3 id="form-date"></h3>
@@ -810,11 +810,12 @@ function showAnomalyInsights(analysis) {
 }
 
 
-document.getElementById('daily-insights-btn').addEventListener('click', showDailyInsights);
-document.getElementById('weekly-insights-btn').addEventListener('click', showWeeklyInsights);
+document.getElementById('modal-daily-insights-btn').addEventListener('click', showDailyInsights);
+document.getElementById('modal-weekly-insights-btn').addEventListener('click', showWeeklyInsights);
 
 function getCurrentDateString() {
   const now = new Date();
+  console.log(now)
   return now.toISOString().split('T')[0]; // Returns YYYY-MM-DD format
   // Or use any other date formatting you prefer
 }
@@ -825,6 +826,7 @@ function extractDateFromForm() {
   const match = formDateText.match(/\d{4}-\d{2}-\d{2}/);
   return match ? match[0] : null;
 }
+
 
 async function showDailyInsights() {
   // Get the date from the form (if present) or use today's date
