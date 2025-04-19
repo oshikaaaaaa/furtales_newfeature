@@ -11,11 +11,78 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f2f4f7;
       margin: 0;
-      padding: 20px;
+      padding: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
+    
+    /* Navigation Bar Styles */
+    .navbar {
+      width: 100%;
+      background-color: #333;
+      color: white;
+      display: flex;
+      justify-content: center;
+      padding: 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      margin-bottom: 20px;
+    }
+    
+    .navbar-container {
+      display: flex;
+      max-width: 1200px;
+      width: 100%;
+    }
+    
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      padding: 15px 20px;
+      font-size: 1.2em;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    
+    .navbar-menu {
+      display: flex;
+      flex-grow: 1;
+    }
+    
+    .navbar-item {
+      padding: 15px 20px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      display: flex;
+      align-items: center;
+    }
+    
+    .navbar-item:hover {
+      background-color: #555;
+    }
+    
+    .navbar-item.active {
+      background-color: #6c63ff;
+    }
+    
+    /* Content container */
+    .content-container {
+      padding: 20px;
+      width: 100%;
+     
+    }
+    
+    /* Section visibility */
+    .section {
+      width: 100%;
+      display: none;
+    }
+    
+    .section.active {
+      display: block;
+    }
+    
+    /* Original calendar styles - unchanged */
     h2 {
       color: #333;
     }
@@ -54,6 +121,7 @@
       padding: 10px;
       border-radius: 10px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      align-items: center;
     }
     .day {
       border: 1px solid #e0e0e0;
@@ -98,10 +166,8 @@
       border-radius: 10px;
       width: 90%;
       max-width: 500px;
-
       max-height: 100vh;
       overflow-y: auto;
-
       box-shadow: 0 2px 10px rgba(0,0,0,0.2);
       display: flex;
       flex-direction: column;
@@ -120,16 +186,9 @@
       border-radius: 5px;
       border: 1px solid #ccc;
       font-size: 14px;
-      min-height: 40px; /* You can increase this if needed */
-  resize: vertical; 
-
+      min-height: 40px;
+      resize: vertical;
       width: 100%;
-  /* Allows users to drag and resize
-  margin-bottom: 10px;
-  padding: 8px;
-  font-size: 14px;
-  box-sizing: border-box; */
-
     }
     .buttons {
       display: flex;
@@ -176,116 +235,219 @@
       padding: 8px 0;
     }
 
+    #insights-modal .form {
+      max-width: 600px;
+    }
+
+    #insights-modal h3 {
+      margin-bottom: 10px;
+      font-size: 1.5em;
+      text-align: center;
+    }
+
+    #insights-modal ul {
+      padding-left: 20px;
+      margin-bottom: 15px;
+    }
+
+    #insights-modal li {
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    #insights-modal hr {
+      border: 0;
+      height: 1px;
+      background-color: #e0e0e0;
+      margin: 15px 0;
+    }
+
+    #insights-modal .btn {
+      margin: 15px auto 0;
+      display: block;
+      width: 100px;
+    }
+
+    /* Add visual indicators to the calendar for anomalies */
+    .day.has-anomaly {
+      background-color: #ffebee;
+      border-color: #ef9a9a;
+    }
+
+    .day.has-anomaly::after {
+      content: "!";
+      position: absolute;
+      bottom: 2px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      color: #f44336;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .insights-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .insights-btn {
+      padding: 10px 20px;
+      background-color: #6c63ff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .insights-btn:hover {
+      background-color: #554fd8;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .insights-btn:active {
+      transform: translateY(0);
+    }
+
+    #heatmap-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
     
-
-
-    /* Add these styles to your existing CSS */
-
-#insights-modal .form {
-  max-width: 600px;
+    .heatmap-container {
+  width: 100%;
+  height: calc(100vh - 160px); /* Adjust based on navbar and padding */
+  background: white;
+  padding: 0;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  overflow: hidden;
 }
+    
+    
+    
+    /* Step Count Styles */
+    .step-count-container {
+     
 
-#insights-modal h3 {
-  margin-bottom: 10px;
-  font-size: 1.5em;
-  text-align: center;
-}
+  
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(226, 221, 221, 0.1);
+      justify-content: center;
 
-#insights-modal ul {
-  padding-left: 20px;
-  margin-bottom: 15px;
-}
+    }
+    
+  
 
-#insights-modal li {
-  margin-bottom: 8px;
-  line-height: 1.4;
-}
-
-#insights-modal hr {
-  border: 0;
-  height: 1px;
-  background-color: #e0e0e0;
-  margin: 15px 0;
-}
-
-#insights-modal .btn {
-  margin: 15px auto 0;
-  display: block;
-  width: 100px;
-}
-
-/* Add visual indicators to the calendar for anomalies */
-.day.has-anomaly {
-  background-color: #ffebee;
-  border-color: #ef9a9a;
-}
-
-.day.has-anomaly::after {
-  content: "!";
-  position: absolute;
-  bottom: 2px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  color: #f44336;
-  font-size: 16px;
-  font-weight: bold;
-}
-.insights-buttons {
+    #calendar-section {
   display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 20px;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.calendar {
+  margin: 0 auto !important;
   width: 100%;
   max-width: 600px;
 }
 
-.insights-btn {
-  padding: 10px 20px;
-  background-color: #6c63ff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 500;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+.status-message {
+  width: 100%;
+  max-width: 600px; /* Match the calendar width */
 }
 
-.insights-btn:hover {
-  background-color: #554fd8;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+#calendar-section.active {
+  display: flex !important;
 }
 
-.insights-btn:active {
-  transform: translateY(0);
+/* Ensure day elements are visible */
+#calendar-section > * {
+  width: 100%;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
-
-
-
   </style>
 </head>
 <body>
-  <h2>Cat Health Calendar</h2>
-  <div class="calendar-nav">
-    <button onclick="changeMonth(-1)">&lt; Prev</button>
-    <h3 id="month-year"></h3>
-    <button onclick="changeMonth(1)">Next &gt;</button>
-  </div>
-  <div class="calendar" id="calendar"></div>
-  <div id="status-message" class="status-message"></div>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-brand" onclick="showSection('calendar')">Cat Health Tracker</div>
+      <div class="navbar-menu">
+        <div class="navbar-item active" onclick="showSection('calendar')">Calendar</div>
+        <div class="navbar-item" onclick="showSection('heatmap')">Heatmap</div>
+        <div class="navbar-item" onclick="showSection('step-count')">Step Count</div>
+      </div>
+    </div>
+  </nav>
+  
+  <div class="content-container">
+    <!-- Calendar Section -->
+    <section id="calendar-section" class="section">
+      <h2>Cat Health Calendar</h2>
+      <div class="calendar-nav">
+        <button onclick="changeMonth(-1)">&lt; Prev</button>
+        <h3 id="month-year"></h3>
+        <button onclick="changeMonth(1)">Next &gt;</button>
+      </div>
+      <div class="calendar" id="calendar"></div>
+      <div id="status-message" class="status-message"></div>
+      
+      <div class="insights-buttons">
+        <button id="daily-insights-btn" class="insights-btn" onclick="showDailyInsights()">View Daily Insights</button>
+        <button id="weekly-insights-btn" class="insights-btn" onclick="showWeeklyInsights()">View Weekly Insights</button>
+      </div>
+    </section>
+    
+    <!-- Heatmap Section -->
+    <section id="heatmap-section" class="section">
+      <h2>Activity Heatmap</h2>
+      <div class="heatmap-container">
+        <!-- We'll load the heatmap HTML file in an iframe -->
+        <iframe id="heatmap-iframe" src="static/heatmap.html" title="Activity Heatmap"></iframe>
+      </div>
+    </section>
+    
+    <!-- Step Count Section -->
+    <section id="step-count-section" class="section">
+      <!-- Center the heading -->
+      <h2 style="text-align: center;">Step Count Tracker</h2>
+      
+      <div class="step-count-container">
+    
+        <!-- Centered and enlarged image -->
+        <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+          <img src="/static/stepgraph.png" alt="Step Tracker"
+               style="width: 80%; max-width: 800px; height: auto; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        </div>
+    
+      </div>
+    </section>
+    
 
+  <!-- Modal for day data -->
   <div class="modal" id="modal">
     <div class="form">
-
-      <h3 id="form-date"></h3>
 
       <div class="insights-buttons">
         <button id="daily-insights-btn" class="insights-btn" onclick="showDailyInsights()">View Daily Insights</button>
         <button id="weekly-insights-btn" class="insights-btn" onclick="showWeeklyInsights()">View Weekly Insights</button>
       </div>
-  
+
+      <h3 id="form-date"></h3>
       <label>Sleep Estimate:</label>
       <select id="sleep_estimate">
         <option value="">Select</option>
@@ -343,15 +505,49 @@
     </div>
   </div>
 
-  <div class="insights-buttons">
-    <button id="daily-insights-btn" class="insights-btn" onclick="showDailyInsights()">View Daily Insights</button>
-    <button id="weekly-insights-btn" class="insights-btn" onclick="showWeeklyInsights()">View Weekly Insights</button>
-  </div>
-
   <script>
     let currentDate = new Date();
     let calendarData = {};
     let currentSelectedDate = '';
+
+  // Fixed showSection function
+function showSection(sectionId) {
+  console.log(`Showing section: ${sectionId}`); // Debug log
+  
+  // Hide all sections first
+  const sections = document.querySelectorAll('.section');
+  sections.forEach(section => {
+    section.style.display = 'none'; // Use display property to ensure sections are hidden
+    section.classList.remove('active');
+  });
+  
+  // Show the selected section
+  const selectedSection = document.getElementById(sectionId + '-section');
+  if (selectedSection) {
+    console.log(`Found section with ID: ${sectionId}-section`); // Debug log
+    selectedSection.style.display = 'block'; // Explicitly show the section
+    selectedSection.classList.add('active');
+  } else {
+    console.log(`ERROR: Could not find section with ID: ${sectionId}-section`); // Debug log
+  }
+  
+  // Update navbar items - remove active class from all
+  const navItems = document.querySelectorAll('.navbar-item');
+  navItems.forEach(item => {
+    item.classList.remove('active');
+  });
+  
+  // Find the correct navbar item to activate
+  const activeNavItems = document.querySelectorAll('.navbar-item');
+  for (const item of activeNavItems) {
+    if (item.getAttribute('onclick').includes(`showSection('${sectionId}')`)) {
+      item.classList.add('active');
+      console.log(`Activated navbar item for: ${sectionId}`); // Debug log
+      break;
+    }
+  }
+}
+
 
     // Fetch data for the current month
     async function fetchMonthData(year, month) {
@@ -927,11 +1123,60 @@ function showNoWeeklyDataMessage() {
 }
     // Initialize calendar
     async function init() {
-      await fetchMonthData(currentDate.getFullYear(), currentDate.getMonth());
+  // Fetch the calendar data
+  await fetchMonthData(currentDate.getFullYear(), currentDate.getMonth());
+  
+  // Make sure all sections are hidden initially
+  const sections = document.querySelectorAll('.section');
+  sections.forEach(section => {
+    section.style.display = 'none';
+    section.classList.remove('active');
+  });
+  
+  // Find which navbar item is initially active
+  const activeNavItem = document.querySelector('.navbar-item.active');
+  if (activeNavItem) {
+    // Extract the section ID from the onclick attribute
+    const onclickAttr = activeNavItem.getAttribute('onclick');
+    const match = onclickAttr.match(/showSection\('([^']+)'\)/);
+    
+    if (match && match[1]) {
+      const initialSection = match[1];
+      console.log(`Initial section from active navbar: ${initialSection}`); // Debug log
+      
+      // Show the initial section
+      const sectionToShow = document.getElementById(initialSection + '-section');
+      if (sectionToShow) {
+        sectionToShow.style.display = 'block';
+        sectionToShow.classList.add('active');
+      }
     }
+  } else {
+    // If no navbar item is active, default to calendar
+    console.log("No active navbar item found, defaulting to calendar"); // Debug log
+    const calendarSection = document.getElementById('calendar-section');
+    if (calendarSection) {
+      calendarSection.style.display = 'block';
+      calendarSection.classList.add('active');
+      
+      // Also activate the calendar navbar item
+      const calendarNavItem = document.querySelector('.navbar-item[onclick="showSection(\'calendar\')"]');
+      if (calendarNavItem) {
+        calendarNavItem.classList.add('active');
+      }
+    }
+  }
+}
 
+// Make sure DOM is fully loaded before initializing
+document.addEventListener('DOMContentLoaded', function() {
+  init();
+});
     // Start the app
-    init();
+
   </script>
 </body>
+
+
+
 </html>

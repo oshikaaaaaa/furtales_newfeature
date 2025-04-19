@@ -1,17 +1,17 @@
 from fastapi import FastAPI, HTTPException, Depends
-from sqlalchemy import create_engine, Column, Integer, String, Date, Text, extract
-from sqlalchemy.orm import declarative_base
+from sqlalchemy import extract
+
 from sqlalchemy.orm import sessionmaker, Session
-from pydantic import BaseModel
+
 from datetime import date
 from typing import List, Optional
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from tracker import CatHealthLog, CatHealthLogCreate,CatHealthLogResponse
-import csv
+
 from datetime import datetime
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+
+
 from tracker import Base, CatHealthLog, SessionLocal 
 
 import pandas as pd
@@ -425,3 +425,14 @@ def get_weekly_insights(date_str: str, db: Session = Depends(get_db)):
 @app.get("/")
 def read_root():
     return FileResponse("static/calendar.html")
+
+@app.get("/heatmap.html")
+def get_heatmap():
+    return FileResponse("static/heatmap.html")
+
+
+@app.get("/stepgraph.png")
+def get_step():
+    return FileResponse("static/stepgraph.png")
+
+

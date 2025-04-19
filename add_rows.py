@@ -1,7 +1,6 @@
 import csv
 from datetime import datetime
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+
 from tracker import Base, CatHealthLog, SessionLocal  # assuming tracker.py has your models
 
 # Path to your CSV

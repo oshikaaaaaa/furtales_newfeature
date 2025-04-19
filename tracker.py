@@ -1,18 +1,11 @@
-from fastapi import FastAPI, HTTPException, Depends
-from sqlalchemy import create_engine, Column, Integer, String, Date, Text, extract, Float, Boolean
+from fastapi import Depends
+from sqlalchemy import create_engine, Column, Integer, String, Date, Text,Float, Boolean
 from sqlalchemy.orm import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import sessionmaker
 from pydantic import BaseModel
 from datetime import date
-from typing import List, Optional, Dict, Any, Union
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
-import numpy as np
-import pickle
-import joblib
-import os
-import pandas as pd
-from fastapi.middleware.cors import CORSMiddleware
+from typing import List
+
 
 # MySQL connection string
 SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:Cooperation322060#@localhost:3306/pet_tracker"
