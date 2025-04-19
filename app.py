@@ -436,11 +436,9 @@ def get_step():
     return FileResponse("static/stepgraph.png")
 
 
-if __name__ != "__main__":
-    import sys
-    from fastapi import FastAPI
-    from mangum import Mangum
+from mangum import Mangum
 
-    handler = Mangum(app)
+# Create the handler
+handler = Mangum(app)
 
 
