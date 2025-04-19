@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cat Health Calendar</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f2f4f7;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h2 {
+      color: #333;
+    }
+    .calendar-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 600px;
+      margin-bottom: 15px;
+    }
+    .calendar-nav button {
+      padding: 8px 16px;
+      background-color: #6c63ff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .calendar-nav button:hover {
+      background-color: #554fd8;
+    }
+    #month-year {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #444;
+    }
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      max-width: 600px;
+      width: 100%;
+      background: white;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .day {
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 12px 0;
+      text-align: center;
+      cursor: pointer;
+      background-color: #f9f9f9;
+      transition: background-color 0.3s ease;
+      position: relative;
+    }
+    .day:hover {
+      background-color: #e0f7fa;
+    }
+    .day.has-data {
+      background-color: #e3f2fd;
+      border-color: #90caf9;
+    }
+    .day.has-data::after {
+      content: "•";
+      position: absolute;
+      bottom: 2px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      color: #2196f3;
+      font-size: 20px;
+    }
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.4);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    .form {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+
+      max-height: 100vh;
+      overflow-y: auto;
+
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+    }
+    .form h3 {
+      margin-bottom: 10px;
+    }
+    .form label {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .form select,
+    .form textarea {
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      min-height: 40px; /* You can increase this if needed */
+  resize: vertical; 
+
+      width: 100%;
+  /* Allows users to drag and resize
+  margin-bottom: 10px;
+  padding: 8px;
+  font-size: 14px;
+  box-sizing: border-box; */
+
+    }
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+    }
+    .btn {
+      cursor: pointer;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 16px;
+    }
+    .save-btn {
+      background: #4caf50;
+    }
+    .save-btn:hover {
+      background: #43a047;
+    }
+    .close-btn {
+      background: #ff5252;
+    }
+    .close-btn:hover {
+      background: #e04848;
+    }
+    .status-message {
+      margin-top: 10px;
+      padding: 8px;
+      border-radius: 5px;
+      text-align: center;
+      display: none;
+    }
+    .success {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+    }
+    .error {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+    .day-header {
+      font-weight: bold;
+      text-align: center;
+      padding: 8px 0;
+    }
+
+    
+
+
+    /* Add these styles to your existing CSS */
+
+#insights-modal .form {
+  max-width: 600px;
+}
+
+#insights-modal h3 {
+  margin-bottom: 10px;
+  font-size: 1.5em;
+  text-align: center;
+}
+
+#insights-modal ul {
+  padding-left: 20px;
+  margin-bottom: 15px;
+}
+
+#insights-modal li {
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+#insights-modal hr {
+  border: 0;
+  height: 1px;
+  background-color: #e0e0e0;
+  margin: 15px 0;
+}
+
+#insights-modal .btn {
+  margin: 15px auto 0;
+  display: block;
+  width: 100px;
+}
+
+/* Add visual indicators to the calendar for anomalies */
+.day.has-anomaly {
+  background-color: #ffebee;
+  border-color: #ef9a9a;
+}
+
+.day.has-anomaly::after {
+  content: "!";
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #f44336;
+  font-size: 16px;
+  font-weight: bold;
+}
+.insights-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.insights-btn {
+  padding: 10px 20px;
+  background-color: #6c63ff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.insights-btn:hover {
+  background-color: #554fd8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.insights-btn:active {
+  transform: translateY(0);
+}
+
+
+
+  </style>
+</head>
+<body>
+  <h2>Cat Health Calendar</h2>
+  <div class="calendar-nav">
+    <button onclick="changeMonth(-1)">&lt; Prev</button>
+    <h3 id="month-year"></h3>
+    <button onclick="changeMonth(1)">Next &gt;</button>
+  </div>
+  <div class="calendar" id="calendar"></div>
+  <div id="status-message" class="status-message"></div>
+
+  <div class="modal" id="modal">
+    <div class="form">
+
+      <h3 id="form-date"></h3>
+
+      <div class="insights-buttons">
+        <button id="daily-insights-btn" class="insights-btn" onclick="showDailyInsights()">View Daily Insights</button>
+        <button id="weekly-insights-btn" class="insights-btn" onclick="showWeeklyInsights()">View Weekly Insights</button>
+      </div>
+  
+      <label>Sleep Estimate:</label>
+      <select id="sleep_estimate">
+        <option value="">Select</option>
+        <option>Normal</option>
+        <option>More than usual</option>
+        <option>Less than usual</option>
+      </select>
+      <label>Food Range:</label>
+      <select id="food_range">
+        <option value="">Select</option>
+        <option>&lt;100g</option>
+        <option>100-130g</option>
+        <option>130-150g</option>
+        <option>150-180g</option>
+        <option>&gt;180g</option>
+      </select>
+      <label>Mood:</label>
+      <select id="mood">
+        <option value="">Select</option>
+        <option>Calm</option>
+        <option>Happy</option>
+        <option>Playful</option>
+        <option>Anxious</option>
+        <option>Irritable</option>
+      </select>
+      <label>Activity Level:</label>
+      <select id="activity_level">
+        <option value="">Select</option>
+        <option>Very active</option>
+        <option>Normal</option>
+        <option>Inactive</option>
+      </select>
+      <label>Vocalization Level:</label>
+      <select id="vocalization_level">
+        <option value="">Select</option>
+        <option>Quiet</option>
+        <option>Occasional</option>
+        <option>Frequent</option>
+      </select>
+      <label>Affection Level:</label>
+      <select id="affection_level">
+        <option value="">Select</option>
+        <option>Clingy</option>
+        <option>Normal</option>
+        <option>Independent</option>
+      </select>
+      <label>Visible Issues (comma-separated):</label>
+      <textarea id="visible_issues"></textarea>
+      <label>Notes:</label>
+      <textarea id="notes"></textarea>
+      <div class="buttons">
+        <button class="btn save-btn" onclick="saveData()">Save</button>
+        <button class="btn close-btn" onclick="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="insights-buttons">
+    <button id="daily-insights-btn" class="insights-btn" onclick="showDailyInsights()">View Daily Insights</button>
+    <button id="weekly-insights-btn" class="insights-btn" onclick="showWeeklyInsights()">View Weekly Insights</button>
+  </div>
+
+  <script>
+    let currentDate = new Date();
+    let calendarData = {};
+    let currentSelectedDate = '';
+
+    // Fetch data for the current month
+    async function fetchMonthData(year, month) {
+      try {
+        const response = await fetch(`/cat_health_logs/${year}/${month+1}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        const data = await response.json();
+        
+        // Transform array to object with dates as keys
+        calendarData = {};
+        data.forEach(entry => {
+          calendarData[entry.date] = entry;
+        });
+        
+        renderCalendar();
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        showStatusMessage('Failed to load data. Please try again.', 'error');
+      }
+    }
+
+    function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+
+      const monthYearDisplay = document.getElementById("month-year");
+      monthYearDisplay.textContent = `${currentDate.toLocaleString('default', { month: 'long' })} ${year}`;
+
+      const calendar = document.getElementById("calendar");
+      calendar.innerHTML = "";
+
+      // Add day headers
+      const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      daysOfWeek.forEach(day => {
+        const dayHeader = document.createElement("div");
+        dayHeader.className = "day-header";
+        dayHeader.textContent = day;
+        calendar.appendChild(dayHeader);
+      });
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      for (let i = 0; i < firstDay; i++) {
+        const empty = document.createElement("div");
+        calendar.appendChild(empty);
+      }
+
+      for (let i = 1; i <= daysInMonth; i++) {
+        const day = document.createElement("div");
+        day.className = "day";
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+        
+        // Check if we have data for this date
+        if (calendarData[dateStr]) {
+          day.classList.add('has-data');
+        }
+        
+        day.textContent = i;
+        day.onclick = () => showForm(dateStr);
+        calendar.appendChild(day);
+      }
+    }
+
+    async function changeMonth(diff) {
+      currentDate.setMonth(currentDate.getMonth() + diff);
+      await fetchMonthData(currentDate.getFullYear(), currentDate.getMonth());
+    }
+
+    async function showForm(dateStr) {
+      currentSelectedDate = dateStr;
+      const modal = document.getElementById("modal");
+      modal.style.display = 'flex';
+      document.getElementById("form-date").textContent = `Date: ${dateStr}`;
+      
+      // Clear form first
+      clearForm();
+
+      // Check if we have data for this date
+      if (calendarData[dateStr]) {
+        // Use data from our cache
+        fillFormWithData(calendarData[dateStr]);
+      } else {
+        // Check if we have data in the database
+        try {
+          const response = await fetch(`/cat_health_log/${dateStr}`);
+          if (response.ok) {
+            const data = await response.json();
+            if (data) {
+              fillFormWithData(data);
+              // Update our cache
+              calendarData[dateStr] = data;
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching entry:', error);
+        }
+      }
+    }
+
+    function fillFormWithData(entry) {
+      document.getElementById("sleep_estimate").value = entry.sleep_estimate || "";
+      document.getElementById("food_range").value = entry.food_range || "";
+      document.getElementById("mood").value = entry.mood || "";
+      document.getElementById("activity_level").value = entry.activity_level || "";
+      document.getElementById("vocalization_level").value = entry.vocalization_level || "";
+      document.getElementById("affection_level").value = entry.affection_level || "";
+      document.getElementById("visible_issues").value = entry.visible_issues || "";
+      document.getElementById("notes").value = entry.notes || "";
+    }
+
+    function clearForm() {
+      document.getElementById("sleep_estimate").value = "";
+      document.getElementById("food_range").value = "";
+      document.getElementById("mood").value = "";
+      document.getElementById("activity_level").value = "";
+      document.getElementById("vocalization_level").value = "";
+      document.getElementById("affection_level").value = "";
+      document.getElementById("visible_issues").value = "";
+      document.getElementById("notes").value = "";
+    }
+
+    function closeModal() {
+      document.getElementById("modal").style.display = 'none';
+    }
+
+    async function saveData() {
+  const formData = {
+    date: currentSelectedDate,
+    sleep_estimate: document.getElementById("sleep_estimate").value,
+    food_range: document.getElementById("food_range").value,
+    mood: document.getElementById("mood").value,
+    activity_level: document.getElementById("activity_level").value,
+    vocalization_level: document.getElementById("vocalization_level").value,
+    affection_level: document.getElementById("affection_level").value,
+    visible_issues: document.getElementById("visible_issues").value,
+    notes: document.getElementById("notes").value
+  };
+
+  try {
+    const response = await fetch('/log_cat_health/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData)
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to save data');
+    }
+
+    const result = await response.json();
+    
+    // Update our cache with the data
+    calendarData[currentSelectedDate] = formData;
+    
+    // Close the modal
+    closeModal();
+    
+    // Mark the day as having data
+    renderCalendar();
+    
+    // Display success message
+    showStatusMessage('Data saved successfully!', 'success');
+    
+    // If there are anomaly insights, show them
+    if (result.analysis) {
+      showAnomalyInsights(result.analysis);
+    }
+  } catch (error) {
+    console.error('Error saving data:', error);
+    showStatusMessage('Failed to save data. Please try again.', 'error');
+  }
+}
+
+function showStatusMessage(message, type) {
+  const statusMessage = document.getElementById('status-message');
+  statusMessage.textContent = message;
+  statusMessage.className = 'status-message ' + type;
+  statusMessage.style.display = 'block';
+  
+  // Hide the message after 3 seconds
+  setTimeout(() => {
+    statusMessage.style.display = 'none';
+  }, 3000);
+}
+
+function showAnomalyInsights(analysis) {
+  console.log(analysis)
+  // Create a modal for insights
+  const insightsModal = document.createElement('div');
+  insightsModal.className = 'modal';
+  insightsModal.id = 'insights-modal';
+  insightsModal.style.display = 'flex';
+  
+  const insightsContent = document.createElement('div');
+  insightsContent.className = 'form';
+  
+  // Determine header text and color based on anomaly status
+  let alertColor, headerText;
+  
+  if (analysis.is_anomaly) {
+    headerText = `Cat Health Insights for ${analysis.date}`;
+    
+    // Add alert level styling
+    if (analysis.alert_level === 'High') {
+      alertColor = '#f44336'; // Red for high
+    } else if (analysis.alert_level === 'Medium') {
+      alertColor = '#ff9800'; // Orange for medium
+    } else if (analysis.alert_level === 'Low') {
+      alertColor = '#ffeb3b'; // Yellow for low
+    }
+  } else {
+    headerText = 'Cat Health Insights - Normal';
+    alertColor = '#4caf50'; // Green for normal
+  }
+  
+  // Create header
+  const header = document.createElement('h3');
+  header.textContent = headerText;
+  header.style.color = alertColor;
+  
+  // Create content for insights
+  const scoreInfo = document.createElement('p');
+  scoreInfo.textContent = `Anomaly Score: ${analysis.anomaly_score.toFixed(2)}`;
+  
+  const insightsList = document.createElement('ul');
+  analysis.insights.forEach(insight => {
+    const item = document.createElement('li');
+    item.textContent = insight;
+    insightsList.appendChild(item);
+  });
+  
+  const recommendation = document.createElement('p');
+  recommendation.innerHTML = `<strong>Recommendation:</strong> ${analysis.recommendation}`;
+  
+  // Add close button
+  const closeButton = document.createElement('button');
+  closeButton.className = 'btn close-btn';
+  closeButton.textContent = 'Close';
+  closeButton.onclick = () => {
+    document.body.removeChild(insightsModal);
+  };
+  
+  // Assemble the modal
+  insightsContent.appendChild(header);
+  insightsContent.appendChild(scoreInfo);
+  insightsContent.appendChild(document.createElement('hr'));
+  insightsContent.appendChild(document.createTextNode('Insights:'));
+  insightsContent.appendChild(insightsList);
+  insightsContent.appendChild(document.createElement('hr'));
+  insightsContent.appendChild(recommendation);
+  insightsContent.appendChild(closeButton);
+  
+  insightsModal.appendChild(insightsContent);
+  document.body.appendChild(insightsModal);
+}
+
+
+document.getElementById('daily-insights-btn').addEventListener('click', showDailyInsights);
+document.getElementById('weekly-insights-btn').addEventListener('click', showWeeklyInsights);
+
+function getCurrentDateString() {
+  const now = new Date();
+  return now.toISOString().split('T')[0]; // Returns YYYY-MM-DD format
+  // Or use any other date formatting you prefer
+}
+
+function extractDateFromForm() {
+  const formDateText = document.getElementById('form-date').textContent.trim();
+  // If it contains "Date: 2025-01-21", extract only the date part
+  const match = formDateText.match(/\d{4}-\d{2}-\d{2}/);
+  return match ? match[0] : null;
+}
+
+async function showDailyInsights() {
+  // Get the date from the form (if present) or use today's date
+  const formDate = extractDateFromForm();
+  const todayDate = formDate || getCurrentDateString();
+  try {
+    // First check if we have data for the selected date
+    const response = await fetch(`/cat_health_log/${todayDate}`);
+    
+    if (response.ok) {
+      const data = await response.json();
+      if (data) {
+        // We have data for today, show insights
+        const analysisResponse = await fetch(`/cat_health_daily_insights/${todayDate}`);
+        if (analysisResponse.ok) {
+          const analysisData = await analysisResponse.json();
+          showAnomalyInsights(analysisData.analysis);
+        } else {
+          throw new Error('Failed to fetch insights');
+        }
+      } else {
+        // No data exists despite OK response
+        showNoDataMessage(todayDate);
+      }
+    } else {
+      // No data exists for today
+      showNoDataMessage(todayDate);
+    }
+  } catch (error) {
+    console.error('Error fetching daily insights:', error);
+    showNoDataMessage(todayDate);
+  }
+}
+
+// Add event listeners to the insight buttons
+document.getElementById('daily-insights-btn').addEventListener('click', showDailyInsights);
+document.getElementById('weekly-insights-btn').addEventListener('click', showWeeklyInsights);
+
+
+async function showInsightsModal(title, analysisData) {
+  // Create the modal wrapper
+  const modal = document.createElement('div');
+  modal.className = 'modal';
+  modal.id = 'weekly-insights-modal';
+  modal.style.display = 'flex';
+
+  const content = document.createElement('div');
+  content.className = 'form';
+  content.style.maxWidth = '700px';
+  content.style.margin = 'auto';
+  content.style.padding = '2rem';
+  content.style.borderRadius = '12px';
+  content.style.boxShadow = '0 4px 24px rgba(0,0,0,0.15)';
+
+  // Modal Header
+  const header = document.createElement('h3');
+  header.textContent = title;
+  header.style.color = '#673ab7'; // Deep purple
+  header.style.marginTop = '0';
+  header.style.borderBottom = '2px solid #e1e1e1';
+  header.style.paddingBottom = '0.75rem';
+  content.appendChild(header);
+
+  // Weekly range message
+  const message = document.createElement('p');
+  message.innerHTML = `<strong>Period:</strong> ${analysisData.message}`;
+  message.style.fontSize = '0.95rem';
+  message.style.color = '#555';
+  content.appendChild(message);
+
+  // Summary section
+  const summaryHeader = document.createElement('h4');
+  summaryHeader.textContent = '📋 Summary';
+  summaryHeader.style.marginBottom = '0.5rem';
+  summaryHeader.style.marginTop = '1.5rem';
+  summaryHeader.style.color = '#555';
+  content.appendChild(summaryHeader);
+
+  if (analysisData.summary && analysisData.summary.length > 0) {
+    const summaryContainer = document.createElement('div');
+    summaryContainer.style.backgroundColor = '#f9f9f9';
+    summaryContainer.style.borderRadius = '8px';
+    summaryContainer.style.padding = '1rem';
+    
+    // Used to track if the current item is related to the previous one
+    let currentAnomalyCategory = null;
+    
+    analysisData.summary.forEach((item, index) => {
+      const summaryItem = document.createElement('div');
+      summaryItem.style.padding = '8px 0';
+      
+      // Check if this is a dates sub-item (starts with an arrow)
+      const isDateItem = item.trim().startsWith('   ↳');
+      
+      if (isDateItem) {
+        // This is a date occurrence item
+        summaryItem.style.paddingLeft = '1.5rem';
+        summaryItem.style.fontSize = '0.9rem';
+        summaryItem.style.color = '#666';
+        summaryItem.style.borderLeft = '2px solid #ddd';
+        summaryItem.style.marginLeft = '0.75rem';
+        summaryItem.style.marginTop = '0.25rem';
+        
+        // Extract the dates from the string
+        const datesText = item.replace('   ↳ Occurred on: ', '');
+        
+        // Create a calendar icon for the dates
+        summaryItem.innerHTML = `<span style="margin-right: 8px;">📅</span> <span style="font-style: italic;">Occurred on: ${datesText}</span>`;
+      } else {
+        // Add a divider after each main item (except for the first one)
+        if (index > 0 && !isDateItem) {
+          summaryItem.style.borderTop = '1px solid #eee';
+          summaryItem.style.marginTop = '0.5rem';
+          summaryItem.style.paddingTop = '0.5rem';
+        }
+        
+        // Assign different icons based on content
+        let icon = '📊'; // Default icon
+        if (item.includes('anomaly')) icon = '⚠️';
+        if (item.includes('food')) icon = '🍽️';
+        if (item.includes('Sleep')) icon = '💤';
+        if (item.includes('Activity')) icon = '🏃';
+        if (item.includes('Affection')) icon = '❤️';
+        if (item.includes('Mood')) icon = '😺';
+        if (item.includes('issues')) icon = '🩺';
+        
+        // Make anomaly categories bold
+        if (item.includes("' anomaly appeared")) {
+          const parts = item.split("' anomaly appeared");
+          summaryItem.innerHTML = `<span style="margin-right: 8px;">${icon}</span> <strong>${parts[0]}'</strong> anomaly appeared${parts[1]}`;
+          currentAnomalyCategory = parts[0];
+        } else {
+          summaryItem.innerHTML = `<span style="margin-right: 8px;">${icon}</span> ${item}`;
+        }
+      }
+      
+      summaryContainer.appendChild(summaryItem);
+    });
+    
+    content.appendChild(summaryContainer);
+  } else {
+    const noSummary = document.createElement('p');
+    noSummary.textContent = 'No important trends or anomalies detected.';
+    noSummary.style.textAlign = 'center';
+    noSummary.style.color = '#888';
+    noSummary.style.padding = '1rem';
+    noSummary.style.backgroundColor = '#f9f9f9';
+    noSummary.style.borderRadius = '8px';
+    content.appendChild(noSummary);
+  }
+  
+  // Close button
+  const closeBtn = document.createElement('button');
+  closeBtn.textContent = 'Close';
+  closeBtn.style.marginTop = '1.5rem';
+  closeBtn.style.padding = '0.75rem 1.5rem';
+  closeBtn.style.backgroundColor = '#673ab7';
+  closeBtn.style.color = 'white';
+  closeBtn.style.border = 'none';
+  closeBtn.style.borderRadius = '4px';
+  closeBtn.style.cursor = 'pointer';
+  closeBtn.style.display = 'block';
+  closeBtn.style.marginLeft = 'auto';
+  closeBtn.onclick = () => modal.remove();
+  
+  content.appendChild(closeBtn);
+  modal.appendChild(content);
+  document.body.appendChild(modal);
+}
+
+// Function to show a message when no data exists for today
+function showNoDataMessage(dateStr) {
+  const insightsModal = document.createElement('div');
+  insightsModal.className = 'modal';
+  insightsModal.id = 'insights-modal';
+  insightsModal.style.display = 'flex';
+  
+  const insightsContent = document.createElement('div');
+  insightsContent.className = 'form';
+  
+  // Create header
+  const header = document.createElement('h3');
+  header.textContent = "No Data Available";
+  header.style.color = '#6c63ff';
+  
+  // Create message
+  const message = document.createElement('p');
+  message.textContent = `You haven't logged your cat's health data for today (${dateStr}). 
+                         Add an entry to receive insights!`;
+  
+  // Add action button
+  const actionButton = document.createElement('button');
+  actionButton.className = 'btn save-btn';
+  actionButton.style.marginTop = '15px';
+  actionButton.textContent = 'Log Today\'s Data';
+  actionButton.onclick = () => {
+    document.body.removeChild(insightsModal);
+    showForm(dateStr);
+  };
+  
+  // Add close button
+  const closeButton = document.createElement('button');
+  closeButton.className = 'btn close-btn';
+  closeButton.style.marginTop = '10px';
+  closeButton.textContent = 'Close';
+  closeButton.onclick = () => {
+    document.body.removeChild(insightsModal);
+  };
+  
+  // Assemble the modal
+  insightsContent.appendChild(header);
+  insightsContent.appendChild(message);
+  insightsContent.appendChild(actionButton);
+  insightsContent.appendChild(closeButton);
+  
+  insightsModal.appendChild(insightsContent);
+  document.body.appendChild(insightsModal);
+}
+async function showWeeklyInsights() {
+  const formDate = extractDateFromForm();
+  const todayDate = formDate || getCurrentDateString();
+
+  try {
+    // Fetch the weekly insights, this endpoint will handle checking for data as well
+    const analysisResponse = await fetch(`/weekly_insights/${todayDate}`);
+    
+    if (!analysisResponse.ok) {
+      throw new Error('Failed to fetch weekly insights');
+    }
+
+    const analysisData = await analysisResponse.json();
+
+    // Check if the response contains weekly data
+    if (analysisData.has_message === false) {
+      showNoWeeklyDataMessage();
+      return;
+    }
+
+    // Show the insights modal if data is available
+    showInsightsModal('Weekly Insights', analysisData);
+
+  } catch (error) {
+    console.error('Error fetching weekly insights:', error);
+    showNoWeeklyDataMessage();
+  }
+}
+
+
+// Function to show message when no weekly data exists
+function showNoWeeklyDataMessage() {
+  const insightsModal = document.createElement('div');
+  insightsModal.className = 'modal';
+  insightsModal.id = 'insights-modal';
+  insightsModal.style.display = 'flex';
+  
+  const insightsContent = document.createElement('div');
+  insightsContent.className = 'form';
+  
+  // Create header
+  const header = document.createElement('h3');
+  header.textContent = "No Weekly Data Available";
+  header.style.color = '#6c63ff';
+  
+  // Create message
+  const message = document.createElement('p');
+  message.textContent = `You haven't logged any cat health data in the past week. 
+                         Log data for a few days to see weekly trends and insights!`;
+  
+  // Add action button
+  const actionButton = document.createElement('button');
+  actionButton.className = 'btn save-btn';
+  actionButton.style.marginTop = '15px';
+  actionButton.textContent = 'Log Today\'s Data';
+  actionButton.onclick = () => {
+    document.body.removeChild(insightsModal);
+    showForm(getCurrentDateString());
+  };
+  
+  // Add close button
+  const closeButton = document.createElement('button');
+  closeButton.className = 'btn close-btn';
+  closeButton.style.marginTop = '10px';
+  closeButton.textContent = 'Close';
+  closeButton.onclick = () => {
+    document.body.removeChild(insightsModal);
+  };
+  
+  // Assemble the modal
+  insightsContent.appendChild(header);
+  insightsContent.appendChild(message);
+  insightsContent.appendChild(actionButton);
+  insightsContent.appendChild(closeButton);
+  
+  insightsModal.appendChild(insightsContent);
+  document.body.appendChild(insightsModal);
+}
+    // Initialize calendar
+    async function init() {
+      await fetchMonthData(currentDate.getFullYear(), currentDate.getMonth());
+    }
+
+    // Start the app
+    init();
+  </script>
+</body>
+</html>
